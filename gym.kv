@@ -1,0 +1,311 @@
+# ===============================
+# Custom Drawer Items
+# ===============================
+
+<DrawerClickableItem@MDNavigationDrawerItem>:
+    ripple_color: app.theme_cls.primary_color
+    selected_color: app.theme_cls.primary_color
+    icon_color: app.theme_cls.text_color
+    text_color: app.theme_cls.text_color
+
+<DrawerLabelItem@MDNavigationDrawerLabel>:
+    text_color: app.theme_cls.text_color
+
+
+# ===============================
+# ROOT LAYOUT WITH DRAWER
+# ===============================
+
+MDNavigationLayout:
+
+    ScreenManager:
+        id: screen_manager
+
+        HomeScreen:
+            name: "home"
+
+        AddWorkoutScreen:
+            name: "add"
+
+        ViewProgressScreen:
+            name: "progress"
+
+        DashboardScreen:
+            name: "dashboard"
+
+    MDNavigationDrawer:
+        id: nav_drawer
+        radius: (0, 16, 16, 0)
+
+        MDNavigationDrawerMenu:
+
+            MDNavigationDrawerHeader:
+                title: "Fitness Tracker"
+                spacing: "4dp"
+                padding: "12dp", 0, 0, "12dp"
+                source: "assets/logo.png"
+
+            DrawerClickableItem:
+                icon: "home"
+                text: "Home"
+                on_release:
+                    screen_manager.current = "home"
+                    nav_drawer.set_state("close")
+
+            DrawerClickableItem:
+                icon: "plus"
+                text: "Add Workout"
+                on_release:
+                    screen_manager.current = "add"
+                    nav_drawer.set_state("close")
+
+            DrawerClickableItem:
+                icon: "chart-line"
+                text: "Progress"
+                on_release:
+                    screen_manager.current = "progress"
+                    nav_drawer.set_state("close")
+
+            DrawerClickableItem:
+                icon: "view-dashboard"
+                text: "Dashboard"
+                on_release:
+                    screen_manager.current = "dashboard"
+                    nav_drawer.set_state("close")
+
+            DrawerLabelItem:
+                text: "Appearance"
+
+            DrawerClickableItem:
+                icon: "theme-light-dark"
+                text: "Toggle Theme"
+                on_release: app.toggle_theme()
+
+
+# ===============================
+# HOME SCREEN
+# ===============================
+
+<HomeScreen>:
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Fitness Tracker"
+            elevation: 2
+            left_action_items: [["menu", lambda x: app.root.ids.nav_drawer.set_state("open")]]
+
+        ScrollView:
+            MDGridLayout:
+                cols: 2
+                padding: "20dp"
+                spacing: "20dp"
+                adaptive_height: True
+
+                MDCard:
+                    elevation: 4
+                    radius: [20]
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: "160dp"
+
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "15dp"
+
+                        MDLabel:
+                            text: "Add Workout"
+                            halign: "center"
+                            font_style: "H6"
+
+                        MDRaisedButton:
+                            text: "Start"
+                            md_bg_color: app.theme_cls.primary_color
+                            pos_hint: {"center_x": 0.5}
+                            on_release: app.root.ids.screen_manager.current = "add"
+
+                MDCard:
+                    elevation: 4
+                    radius: [20]
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: "160dp"
+
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "15dp"
+
+                        MDLabel:
+                            text: "Progress Analytics"
+                            halign: "center"
+                            font_style: "H6"
+
+                        MDRaisedButton:
+                            text: "View"
+                            md_bg_color: app.theme_cls.primary_color
+                            pos_hint: {"center_x": 0.5}
+                            on_release: app.root.ids.screen_manager.current = "progress"
+
+                MDCard:
+                    elevation: 4
+                    radius: [20]
+                    padding: "20dp"
+                    size_hint_y: None
+                    height: "160dp"
+
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        spacing: "15dp"
+
+                        MDLabel:
+                            text: "Dashboard"
+                            halign: "center"
+                            font_style: "H6"
+
+                        MDRaisedButton:
+                            text: "Open"
+                            md_bg_color: app.theme_cls.primary_color
+                            pos_hint: {"center_x": 0.5}
+                            on_release: app.root.ids.screen_manager.current = "dashboard"
+
+
+# ===============================
+# ADD WORKOUT SCREEN
+# ===============================
+
+<AddWorkoutScreen>:
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Add Workout"
+            left_action_items: [["arrow-left", lambda x: app.go_home()]]
+
+        ScrollView:
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: "20dp"
+                spacing: "15dp"
+                adaptive_height: True
+
+                MDRaisedButton:
+                    id: day_dropdown
+                    text: "Select Day"
+                    md_bg_color: app.theme_cls.primary_color
+                    on_release: app.open_day_menu(self)
+
+                MDTextField:
+                    id: exercise
+                    hint_text: "Exercise Name"
+                    helper_text_mode: "on_focus"
+
+                MDTextField:
+                    id: weight
+                    hint_text: "Weight (Kg)"
+                    input_filter: "float"
+
+                MDTextField:
+                    id: sets
+                    hint_text: "Sets"
+                    input_filter: "int"
+
+                MDTextField:
+                    id: reps
+                    hint_text: "Reps"
+                    input_filter: "int"
+
+                MDTextField:
+                    id: rest
+                    hint_text: "Rest Time (Seconds)"
+                    input_filter: "int"
+
+                MDRaisedButton:
+                    text: "Save Workout"
+                    md_bg_color: app.theme_cls.primary_color
+                    on_release: app.save_workout()
+
+
+# ===============================
+# VIEW PROGRESS SCREEN
+# ===============================
+
+<ViewProgressScreen>:
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Progress"
+            left_action_items: [["arrow-left", lambda x: app.go_home()]]
+
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: "20dp"
+            spacing: "15dp"
+
+            MDTextField:
+                id: exercise_search
+                hint_text: "Enter Exercise Name"
+
+            MDRaisedButton:
+                text: "Load Progress"
+                md_bg_color: app.theme_cls.primary_color
+                on_release: app.load_progress()
+
+            MDLabel:
+                id: result
+                text: ""
+                halign: "center"
+                font_style: "Subtitle1"
+
+            ScrollView:
+                MDList:
+                    id: history_list
+
+
+# ===============================
+# DASHBOARD SCREEN
+# ===============================
+
+<DashboardScreen>:
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Dashboard"
+            left_action_items: [["arrow-left", lambda x: app.go_home()]]
+
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: "20dp"
+            spacing: "20dp"
+
+            MDCard:
+                elevation: 4
+                radius: [20]
+                size_hint_y: None
+                height: "120dp"
+                padding: "20dp"
+
+                MDLabel:
+                    id: total_label
+                    text: "Total Workouts"
+                    halign: "center"
+                    font_style: "H6"
+
+            MDCard:
+                elevation: 4
+                radius: [20]
+                size_hint_y: None
+                height: "120dp"
+                padding: "20dp"
+
+                MDLabel:
+                    id: ai_label
+                    text: "AI Suggestion Will Appear"
+                    halign: "center"
+                    font_style: "H6"
+
+            MDRaisedButton:
+                text: "Refresh Analytics"
+                md_bg_color: app.theme_cls.primary_color
+                on_release: app.load_dashboard()
